@@ -1,0 +1,19 @@
+{
+    "name": "arturzealves/moses",
+    "description": "Moses is a prophet that can generate prophecies for a given PHP class",
+    "type": "library",
+    "require": {
+        "symfony/console": "2.0.x"
+    },
+    "authors": [
+        {
+            "name": "Artur Alves",
+            "email": "aalves.external@thefork.pt"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "ArturZeAlves": "src/"
+        }
+    }
+}
