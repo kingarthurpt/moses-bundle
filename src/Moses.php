@@ -38,7 +38,6 @@ class Moses
         $namespace = $reflection->getNamespaceName();
         $className = $reflection->getShortName();
         $functions = $this->convertPublicFunctions($reflection);
-
         $str = <<<EOF
 <?php
 
@@ -56,6 +55,7 @@ EOF;
     private function convertPublicFunctions($reflection)
     {
         $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+
         $result = "";
         foreach ($methods as $method) {
             $string = $this->writeDocBlock();
@@ -75,14 +75,12 @@ EOF;
         $className = $reflection->getShortName();
         $objectName = lcfirst($className);
 
-        $parameters = $method->getParameters();
-        foreach ($parameters as $parameter) {
-            $class = $parameter->getClass();
-            $name = $parameter->getName();
+        // $parameters = $method->getParameters();
+        // foreach ($parameters as $parameter) {
+        //     $class = $parameter->getClass();
+        //     $name = $parameter->getName();
+        // }
 
-
-        }
-        die;
         // ReflectionParameter#5
 
         return <<<EOF

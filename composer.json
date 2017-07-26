@@ -3,7 +3,7 @@
     "description": "Moses is a prophet that can generate prophecies for a given PHP class",
     "type": "library",
     "require": {
-        "symfony/console": "2.0.x"
+        "symfony/console": "*"
     },
     "authors": [
         {
@@ -12,8 +12,11 @@
         }
     ],
     "autoload": {
-        "psr-0": {
-            "ArturZeAlves": "src/"
-        }
+        "psr-4": {
+            "ArturZeAlves\\": "src/"
+        },
+        "classmap": [
+            "app/AppKernel.php"
+        ]
     }
 }

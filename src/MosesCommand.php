@@ -1,13 +1,15 @@
 <?php
 namespace ArturZeAlves;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 
-class MosesCommand extends ContainerAwareCommand
+class MosesCommand extends Command
 {
     /**
      * Configures the Command
@@ -44,16 +46,15 @@ class MosesCommand extends ContainerAwareCommand
         $namespace = $gen->getNamespace($filename);
         $testNamespace = $gen->guessTestNamespace($namespace);
 
-        $dialog = $this->getHelperSet()->get('dialog');
         $output->writeln("");
         $output->writeln("Namespace: ".$testNamespace);
-        if (!$dialog->askConfirmation(
-            $output,
-            "<question>Is this namespace correct? [y/n]</question>",
-            false
-        )) {
+
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion('Is this namespace correct? [y/n] ', false);
+        if (!$helper->ask($input, $output, $question)) {
             $output->writeln("Type the correct namespace bellow");
-            $testNamespace = $dialog->ask($output, 'Namespace: ', $testNamespace);
+            $question = new Question('Namespace: ', $testNamespace);
+            $testNamespace = $helper->ask($input, $output, $question);
         }
 
         $reflection = new \ReflectionClass($namespace.'\\'.$className);
