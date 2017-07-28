@@ -1,22 +1,28 @@
 {
     "name": "arturzealves/moses",
     "description": "Moses is a prophet that can generate prophecies for a given PHP class",
-    "type": "library",
+    "type": "symfony-bundle",
+    "authors": [{
+        "name": "Artur Alves",
+        "email": "aalves.external@thefork.pt"
+    }],
+    "keywords": [
+        "phpunit prophecy mocking generator"
+    ],
+    "license": "MIT",
     "require": {
+        "php": ">=5.3",
         "symfony/console": "*"
     },
-    "authors": [
-        {
-            "name": "Artur Alves",
-            "email": "aalves.external@thefork.pt"
-        }
-    ],
     "autoload": {
-        "psr-4": {
-            "ArturZeAlves\\": "src/"
-        },
-        "classmap": [
-            "app/AppKernel.php"
-        ]
+        "psr-0": {
+            "ArturZeAlves\\MosesBundle": ""
+        }
+    },
+    "target-dir": "ArturZeAlves/MosesBundle",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "create-bundle"
+        }
     }
 }
