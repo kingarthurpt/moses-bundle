@@ -1,0 +1,4 @@
+services:
+#    artur_ze_alves_moses.example:
+#        class: ArturZeAlves\MosesBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

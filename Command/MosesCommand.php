@@ -1,13 +1,14 @@
 <?php
-namespace ArturZeAlves;
+namespace ArturZeAlves\Command;
 
+use ArturZeAlves\Moses;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Console\Question\Question;
+
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class MosesCommand extends Command
 {
@@ -46,15 +47,16 @@ class MosesCommand extends Command
         $namespace = $gen->getNamespace($filename);
         $testNamespace = $gen->guessTestNamespace($namespace);
 
+        $dialog = $this->getHelperSet()->get('dialog');
         $output->writeln("");
         $output->writeln("Namespace: ".$testNamespace);
-
-        $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('Is this namespace correct? [y/n] ', false);
-        if (!$helper->ask($input, $output, $question)) {
+        if (!$dialog->askConfirmation(
+            $output,
+            "<question>Is this namespace correct? [y/n]</question>",
+            false
+        )) {
             $output->writeln("Type the correct namespace bellow");
-            $question = new Question('Namespace: ', $testNamespace);
-            $testNamespace = $helper->ask($input, $output, $question);
+            $testNamespace = $dialog->ask($output, 'Namespace: ', $testNamespace);
         }
 
         $reflection = new \ReflectionClass($namespace.'\\'.$className);
