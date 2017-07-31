@@ -1,4 +1,6 @@
 # moses-bundle
+![very nice image of Moses](http://217.218.67.237:83/thumbnail/20160428/1054597_xl.jpg "Moses")
+
 Moses the prophet, is a symfony bundle that attempts to generate PHP unit test prophecies for a given PHP class that needs to be tested.
 Moses went for an intensive training with God for 40 days and 40 nights in order to understand how to properly mock your PHP classes, so that you could just run a simple Symfony command to generate everything in less than 40 seconds.
 
@@ -38,3 +40,8 @@ if (in_array($this->getEnvironment(), array('dev', 'test'))) {
 ```shell
 $ php app/console moses:generate-test-class {your_class_file_path}
 ```
+
+### How to contribute
+1. Pick an [open issue](https://github.com/arturzealves/moses-bundle/issues) and assign it to yourself
+2. Develop your code on some different branch (other than master)
+3. Push the code to this repository and open a pull request
