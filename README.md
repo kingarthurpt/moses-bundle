@@ -36,5 +36,5 @@ if (in_array($this->getEnvironment(), array('dev', 'test'))) {
 
 ### How to invoke Moses the prophet
 ```shell
-$ php app/console lf:unit {your_class_file_path}
+$ php app/console moses:generate-test-class {your_class_file_path}
 ```
