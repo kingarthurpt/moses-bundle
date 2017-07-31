@@ -1,16 +1,15 @@
 <?php
 namespace ArturZeAlves\MosesBundle\Command;
 
-use ArturZeAlves\Moses;
+use ArturZeAlves\MosesBundle\Moses;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\InputArgument;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
-class MosesCommand extends Command
+class MosesCommand extends ContainerAwareCommand
 {
     /**
      * Configures the Command
@@ -18,7 +17,7 @@ class MosesCommand extends Command
     public function configure()
     {
         $this
-            ->setName('lf:unit')
+            ->setName('moses:generate-test-class')
             ->setDescription('Generates a unit test class')
             ->addArgument(
                 'class',
@@ -37,15 +36,15 @@ class MosesCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $filename = $input->getArgument('class');
-        $gen = new Moses();
+        $moses = $this->getContainer()->get('artur_ze_alves_moses.moses');
         if (!file_exists($filename)) {
             printf("Invalid file %s\n", $filename);
             die;
         }
 
-        $className = $gen->getClassName($filename);
-        $namespace = $gen->getNamespace($filename);
-        $testNamespace = $gen->guessTestNamespace($namespace);
+        $className = $moses->getClassName($filename);
+        $namespace = $moses->getNamespace($filename);
+        $testNamespace = $moses->guessTestNamespace($namespace);
 
         $dialog = $this->getHelperSet()->get('dialog');
         $output->writeln("");
@@ -60,6 +59,6 @@ class MosesCommand extends Command
         }
 
         $reflection = new \ReflectionClass($namespace.'\\'.$className);
-        echo $gen->convert($reflection, $testNamespace);
+        echo $moses->generate($reflection, $testNamespace);
     }
 }

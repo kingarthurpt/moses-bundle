@@ -1,4 +1,8 @@
 services:
-#    artur_ze_alves_moses.example:
-#        class: ArturZeAlves\MosesBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
+   artur_ze_alves_moses.moses:
+       class: ArturZeAlves\MosesBundle\Moses
+       arguments: ["@artur_ze_alves_moses.writer.default"]
+
+   artur_ze_alves_moses.writer.default:
+       class: ArturZeAlves\MosesBundle\Writer\DefaultWriter
+    #    arguments: ["@service_id", "plain_value", "%parameter%"]
