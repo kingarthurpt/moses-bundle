@@ -1,6 +1,6 @@
 <?php
 
-namespace ArturZeAlves;
+namespace ArturZeAlves\MosesBundle;
 
 class Moses
 {

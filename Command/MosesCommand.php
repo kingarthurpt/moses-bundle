@@ -1,5 +1,5 @@
 <?php
-namespace ArturZeAlves\Command;
+namespace ArturZeAlves\MosesBundle\Command;
 
 use ArturZeAlves\Moses;
 use Symfony\Component\Console\Command\Command;
