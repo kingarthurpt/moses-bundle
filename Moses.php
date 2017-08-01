@@ -24,13 +24,25 @@ class Moses
     /**
      * Gets the class name from a given PHP file
      *
-     * @param  string $filenam
+     * @param  string $filename
      *
      * @return string
      */
     public function getClassName($filename)
     {
         return str_replace(".php", "", basename($filename));
+    }
+
+    /**
+     * Gets the test file name
+     *
+     * @param  string $className
+     *
+     * @return string
+     */
+    public function getTestFileName($className)
+    {
+        return $className."Test";
     }
 
     /**
@@ -63,6 +75,27 @@ class Moses
         array_splice($parts, -1, 0, "Tests");
 
         return implode("\\", $parts);
+    }
+
+    /**
+     * Guesses the file path of the generated test class
+     *
+     * @param  string $filename
+     * @param  string $className
+     *
+     * @return string
+     */
+    public function guessTestFilePath($filename, $className = "")
+    {
+        $parts = explode("/", dirname($filename));
+        array_splice($parts, -1, 0, "Tests");
+
+        $path = implode("/", $parts);
+        if (!empty($className)) {
+            return $path."/".$this->getTestFileName($className).".php";
+        }
+
+        return $path;
     }
 
     /**

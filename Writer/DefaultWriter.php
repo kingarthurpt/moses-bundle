@@ -14,7 +14,6 @@ class DefaultWriter
      */
     public function writeClass($reflection, $testNamespace)
     {
-        // todo: guess test class namespace
         $namespace = $reflection->getNamespaceName();
         $className = $reflection->getShortName();
         $functions = $this->convertPublicFunctions($reflection);
@@ -39,7 +38,7 @@ EOF;
      *
      * @return string
      */
-    public function convertPublicFunctions($reflection)
+    protected function convertPublicFunctions($reflection)
     {
         $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
 
