@@ -11,6 +11,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class MosesCommand extends ContainerAwareCommand
 {
+    /**
+     * @var InputInterface
+     */
+    protected $input;
 
     /**
      * @var OutputInterface
@@ -34,7 +38,13 @@ class MosesCommand extends ContainerAwareCommand
                'sandbox',
                null,
                InputOption::VALUE_NONE,
-               'If set, moses will not write a new file and instead will write all output to the terminal'
+               'If set, Moses will not write a new file and instead will write all output to the terminal'
+            )
+            ->addOption(
+               'no-confirmation',
+               null,
+               InputOption::VALUE_NONE,
+               'If set, Moses will not ask you anything and will follow God\'s will'
             )
         ;
     }
@@ -47,6 +57,7 @@ class MosesCommand extends ContainerAwareCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->input = $input;
         $this->output = $output;
 
         $filename = $input->getArgument('class');
@@ -60,12 +71,14 @@ class MosesCommand extends ContainerAwareCommand
         $namespace = $moses->getNamespace($filename);
         $testNamespace = $moses->guessTestNamespace($namespace);
 
-        $testNamespace = $this->askAndRead(
-            "Namespace: ",
-            $testNamespace,
-            "Is this namespace correct?",
-            "Type the correct namespace below"
-        );
+        if (!$this->input->getOption('no-confirmation')) {
+            $testNamespace = $this->askAndRead(
+                "Namespace: ",
+                $testNamespace,
+                "Is this namespace correct?",
+                "Type the correct namespace below"
+            );
+        }
 
         $reflection = new \ReflectionClass($namespace.'\\'.$className);
         $result = $moses->generate($reflection, $testNamespace);
@@ -89,23 +102,25 @@ class MosesCommand extends ContainerAwareCommand
      */
     private function saveFile($outputFile, $result, $filename, $className)
     {
-        $outputFile = $this->askAndRead(
-            "Test class file path: ",
-            $outputFile,
-            "Is this file path correct?",
-            "Type the correct file path below"
-        );
-
-        if (file_exists($outputFile)) {
-            $answer = $this->askAndRead(
-                "Saving file to: ",
+        if (!$this->input->getOption('no-confirmation')) {
+            $outputFile = $this->askAndRead(
+                "Test class file path: ",
                 $outputFile,
-                "The file already exists. Do you want to replace it? "
+                "Is this file path correct?",
+                "Type the correct file path below"
             );
 
-            if (!$answer) {
-                $this->output->writeln("Nothing to do here then...");
-                die;
+            if (file_exists($outputFile)) {
+                $answer = $this->askAndRead(
+                    "Saving file to: ",
+                    $outputFile,
+                    "The file already exists. Do you want to replace it? "
+                );
+
+                if (!$answer) {
+                    $this->output->writeln("Nothing to do here then...");
+                    die;
+                }
             }
         }
 
