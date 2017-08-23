@@ -43,15 +43,11 @@ EOF;
     {
         $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
 
-        $result = "";
+        $result = $this->writeSetUp($reflection);
         foreach ($methods as $method) {
-            $string = $this->writeDocBlock();
-            if ($method->isConstructor()) {
-                $string .= $this->writeConstructor($reflection, $method);
-            } else {
-                $string .= $this->writePublicFunction($reflection, $method);
-            }
-            $result .= $string;
+            // $string = $this->writeDocBlock();
+            // if ($method->isConstructor()) {
+            $result .= $this->writePublicFunction($reflection, $method);
         }
 
         return $result;
@@ -79,16 +75,18 @@ EOF;
     }
 
     /**
-     * Writes the class constructor
+     * Writes the setUp function to prophesize the class constructor
      *
      * @param  \ReflectionClass $reflection
      * @param  \ReflectionMethod $method
      *
      * @return string
      */
-    public function writeConstructor($reflection, $method)
+    public function writeSetUp($reflection)
     {
         $className = $reflection->getShortName();
+        $longClassName = $reflection->getName();
+        $this->addUseStatement($longClassName);
         $objectName = lcfirst($className);
 
         // $parameters = $method->getParameters();
@@ -96,8 +94,6 @@ EOF;
         //     $class = $parameter->getClass();
         //     $name = $parameter->getName();
         // }
-
-        // ReflectionParameter#5
 
         return <<<EOF
     public function setUp()
