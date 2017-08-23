@@ -13,19 +13,19 @@ Edit the *composer.json* file and add the following:
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@github.com:arturzealves/moses-bundle.git"
+            "url": "git@github.com:kingarthurpt/moses-bundle.git"
         }
     ],
     ...
     "require-dev": {
-        "arturzealves/moses": "dev-master"
+        "kingarthurpt/moses": "dev-master"
     }
     ...
 ```
 
 Execute the following command on your terminal
 ```shell
-$ composer update "arturzealves/moses"
+$ composer update "kingarthurpt/moses"
 ```
 
 Edit the *app/AppKernel.php* file and add the following:
@@ -42,6 +42,6 @@ $ php app/console moses:generate-test-class {your_class_file_path}
 ```
 
 ### How to contribute
-1. Pick an [open issue](https://github.com/arturzealves/moses-bundle/issues) and assign it to yourself
+1. Pick an [open issue](https://github.com/kingarthurpt/moses-bundle/issues) and assign it to yourself
 2. Develop your code on some different branch (other than master)
 3. Push the code to this repository and open a pull request

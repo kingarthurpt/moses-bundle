@@ -1,10 +1,10 @@
 {
-    "name": "arturzealves/moses",
-    "description": "Moses is a prophet that can generate prophecies for a given PHP class",
+    "name": "kingarthurpt/moses",
+    "description": "Moses the prophet, talks with God and writes prophecies for your PHP classes",
     "type": "symfony-bundle",
     "authors": [{
         "name": "Artur Alves",
-        "email": "aalves.external@thefork.pt"
+        "email": "artur.ze.alves@gmail.pt"
     }],
     "keywords": [
         "phpunit prophecy mocking generator"
