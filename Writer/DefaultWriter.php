@@ -41,7 +41,7 @@ EOF;
      */
     protected function convertPublicFunctions($reflection)
     {
-        $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+        $methods = $this->getClassFunctions($reflection, \ReflectionMethod::IS_PUBLIC);
 
         $result = $this->writeSetUp($reflection);
         foreach ($methods as $method) {
@@ -62,7 +62,7 @@ EOF;
      */
     protected function convertPrivateFunctions($reflection)
     {
-        $methods = $reflection->getMethods(\ReflectionMethod::IS_PRIVATE);
+        $methods = $this->getClassFunctions($reflection, \ReflectionMethod::IS_PRIVATE);
 
         $result = "";
         foreach ($methods as $method) {
@@ -85,8 +85,8 @@ EOF;
     public function writeSetUp($reflection)
     {
         $className = $reflection->getShortName();
-        $longClassName = $reflection->getName();
-        $this->addUseStatement($longClassName);
+        // $longClassName = $reflection->getName();
+        // $this->addUseStatement($longClassName);
         $objectName = lcfirst($className);
 
         // $parameters = $method->getParameters();
@@ -170,5 +170,23 @@ EOF;
 EOF;
 
         return $str;
+    }
+
+    /**
+     * Gets functions from the reflection class only with a given visibility
+     * @param  \ReflectionClass $reflection
+     * @param  int $visibility
+     * @return array
+     */
+    private function getClassFunctions($reflection, $visibility)
+    {
+        $functions = [];
+        foreach($reflection->getMethods($visibility) as $method) {
+            if ($method->class == $reflection->getName()) {
+                $functions[] = $method;
+            }
+        }
+
+        return $functions;
     }
 }
