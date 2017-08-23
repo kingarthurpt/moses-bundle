@@ -23,7 +23,7 @@ class DefaultWriter
 
 namespace ${testNamespace};
 
-class ${className}Test
+class ${className}Test extends \PHPUnit_Framework_TestCase
 {
 ${functions}
 }
