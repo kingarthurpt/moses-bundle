@@ -5,6 +5,11 @@ namespace ArturZeAlves\MosesBundle\Writer;
 class DefaultWriter
 {
     /**
+     * @var array
+     */
+    private $uses = [];
+
+    /**
      * Writes a class
      *
      * @param  \ReflectionClass $reflection
@@ -16,13 +21,17 @@ class DefaultWriter
     {
         $namespace = $reflection->getNamespaceName();
         $className = $reflection->getShortName();
-        $functions = $this->convertPublicFunctions($reflection);
+        $functions = $this->writeSetUp($reflection);
+        $functions .= $this->convertPublicFunctions($reflection);
         $functions .= $this->convertPrivateFunctions($reflection);
+        $useStatements = $this->writeUseStatements();
+
         $str = <<<EOF
 <?php
 
 namespace ${testNamespace};
 
+${useStatements}
 class ${className}Test extends \PHPUnit_Framework_TestCase
 {
 ${functions}
@@ -30,6 +39,46 @@ ${functions}
 EOF;
 
         return $str;
+    }
+
+    /**
+     * Writes the setUp function to prophesize the class constructor
+     *
+     * @param  \ReflectionClass $reflection
+     * @param  \ReflectionMethod $method
+     *
+     * @return string
+     */
+    public function writeSetUp($reflection)
+    {
+        $className = $reflection->getShortName();
+        $longClassName = $reflection->getName();
+        $this->addUseStatement($longClassName);
+        $property = '$this->' . lcfirst($className);
+
+        $parameters = $reflection->getConstructor()->getParameters();
+        $arguments = [];
+        $argumentProphecies = [];
+        foreach ($parameters as $parameter) {
+            $class = $this->getClassName($parameter);
+            $this->addUseStatement($class);
+            $name = $parameter->getName();
+
+            $shortClassName = $this->getShortClassName($class);
+            $arguments[] = sprintf('$this->%s->reveal()', $name);
+            $argumentProphecies[] = sprintf('$this->%s = $this->prophesize(%s::class);', $name, $shortClassName);
+        }
+        $arguments = implode(", ", $arguments);
+        $argumentProphecies = implode("\n        ", $argumentProphecies);
+
+        return <<<EOF
+    public function setUp()
+    {
+        $argumentProphecies
+
+        $property = new $className($arguments);
+    }\n\n
+EOF;
     }
 
     /**
@@ -43,10 +92,12 @@ EOF;
     {
         $methods = $this->getClassFunctions($reflection, \ReflectionMethod::IS_PUBLIC);
 
-        $result = $this->writeSetUp($reflection);
+        $result = "";
         foreach ($methods as $method) {
             // $string = $this->writeDocBlock();
-            // if ($method->isConstructor()) {
+            if ($method->isConstructor()) {
+                continue;
+            }
             $result .= $this->writePublicFunction($reflection, $method);
         }
 
@@ -75,35 +126,6 @@ EOF;
     }
 
     /**
-     * Writes the setUp function to prophesize the class constructor
-     *
-     * @param  \ReflectionClass $reflection
-     * @param  \ReflectionMethod $method
-     *
-     * @return string
-     */
-    public function writeSetUp($reflection)
-    {
-        $className = $reflection->getShortName();
-        // $longClassName = $reflection->getName();
-        // $this->addUseStatement($longClassName);
-        $objectName = lcfirst($className);
-
-        // $parameters = $method->getParameters();
-        // foreach ($parameters as $parameter) {
-        //     $class = $parameter->getClass();
-        //     $name = $parameter->getName();
-        // }
-
-        return <<<EOF
-    public function setUp()
-    {
-        $${objectName} = new {$className}();
-    }\n\n
-EOF;
-    }
-
-    /**
      * Writes a public function
      *
      * @param  \ReflectionClass $reflection
@@ -111,7 +133,7 @@ EOF;
      *
      * @return string
      */
-    public function writePublicFunction($reflection, $method)
+    protected function writePublicFunction($reflection, $method)
     {
         $className = $reflection->getName();
         $objectName = lcfirst($className);
@@ -136,7 +158,7 @@ EOF;
      *
      * @return string
      */
-    public function writePrivateFunction($reflection, $method)
+    protected function writePrivateFunction($reflection, $method)
     {
         $className = $reflection->getName();
         $objectName = lcfirst($className);
@@ -161,7 +183,7 @@ EOF;
      *
      * @return string
      */
-    public function writeDocBlock()
+    protected function writeDocBlock()
     {
         $str = <<<EOF
     /**
@@ -173,12 +195,43 @@ EOF;
     }
 
     /**
+     * Writes all use statements
+     *
+     * @return string
+     */
+    protected function writeUseStatements()
+    {
+        sort($this->uses);
+
+        $str = "";
+        foreach ($this->uses as $use) {
+            $str .= $use . "\n";
+        }
+
+        return $str;
+    }
+
+    /**
+     * Adds a use statement
+     *
+     * @param string class
+     */
+    protected function addUseStatement($class)
+    {
+        $this->uses[] = <<<EOF
+use ${class};
+EOF;
+    }
+
+    /**
      * Gets functions from the reflection class only with a given visibility
+     *
      * @param  \ReflectionClass $reflection
      * @param  int $visibility
+     *
      * @return array
      */
-    private function getClassFunctions($reflection, $visibility)
+    protected function getClassFunctions($reflection, $visibility)
     {
         $functions = [];
         foreach($reflection->getMethods($visibility) as $method) {
@@ -188,5 +241,33 @@ EOF;
         }
 
         return $functions;
+    }
+
+    /**
+     * Gets the class name from a ReflectionParameter
+     *
+     * @param  \ReflectionParameter $param
+     *
+     * @return string
+     */
+    protected function getClassName(\ReflectionParameter $param)
+    {
+        $str = explode(" ", $param->__toString());
+
+        return $str[4];
+    }
+
+    /**
+     * Gets the short class name from a string representing a long class name
+     *
+     * @param  string $class
+     *
+     * @return string
+     */
+    protected function getShortClassName($class)
+    {
+        $str = explode("\\", $class);
+
+        return $str[count($str) - 1];
     }
 }
