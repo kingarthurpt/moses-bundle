@@ -41,6 +41,9 @@ if (in_array($this->getEnvironment(), array('dev', 'test'))) {
 $ php app/console moses:generate-test-class {your_class_file_path}
 ```
 
+### Output example
+[Click here](docs/outputExample.md) to see how Moses the prophet writes a test class today
+
 ### How to contribute
 1. Pick an [open issue](https://github.com/arturzealves/moses-bundle/issues) and assign it to yourself
 2. Develop your code on some different branch (other than master)

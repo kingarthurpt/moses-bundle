@@ -8,6 +8,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class MosesCommand extends ContainerAwareCommand
 {
@@ -60,16 +62,19 @@ class MosesCommand extends ContainerAwareCommand
         $this->input = $input;
         $this->output = $output;
 
-        $filename = $input->getArgument('class');
         $moses = $this->getContainer()->get('artur_ze_alves_moses.moses');
-        if (!file_exists($filename)) {
-            printf("Invalid file %s\n", $filename);
-            die;
+        $parser = $this->getContainer()->get('artur_ze_alves_moses.parser.php_file_parser');
+        $prediction = $this->getContainer()->get('artur_ze_alves_moses.prediction.prediction');
+        $filesystem = $moses->getWriter()->getFilesystem();
+
+        $filename = $input->getArgument('class');
+        if (!$filesystem->exists($filename)) {
+            throw new FileNotFoundException();
         }
 
-        $className = $moses->getClassName($filename);
-        $namespace = $moses->getNamespace($filename);
-        $testNamespace = $moses->guessTestNamespace($namespace);
+        $className = $parser->getClassName($filename);
+        $namespace = $parser->getNamespace($filename);
+        $testNamespace = $prediction->guessTestNamespace($namespace);
 
         if (!$this->input->getOption('no-confirmation')) {
             $testNamespace = $this->askAndRead(
@@ -81,26 +86,27 @@ class MosesCommand extends ContainerAwareCommand
         }
 
         $reflection = new \ReflectionClass($namespace.'\\'.$className);
-        $result = $moses->generate($reflection, $testNamespace);
+        $prophecies = $moses->prophesize($reflection, $testNamespace);
 
         if ($input->getOption('sandbox')) {
-            $output->write($result);
+            $output->write($prophecies);
             die;
         }
 
-        $outputFile = $moses->guessTestFilePath($filename, $className);
-        $this->saveFile($outputFile, $result, $filename, $className);
+        $outputFile = $prediction->guessTestFilePath($filename, $className);
+        $this->saveFile($filesystem, $outputFile, $prophecies, $filename, $className);
     }
 
     /**
      * Saves the test class in a file
      *
-     * @param  string $outputFile
-     * @param  string $result
-     * @param  string $filename
-     * @param  string $className
+     * @param Filesystem $filesystem
+     * @param string     $outputFile
+     * @param string     $prophecies
+     * @param string     $filename
+     * @param string     $className
      */
-    private function saveFile($outputFile, $result, $filename, $className)
+    private function saveFile(Filesystem $filesystem, $outputFile, $prophecies, $filename, $className)
     {
         if (!$this->input->getOption('no-confirmation')) {
             $outputFile = $this->askAndRead(
@@ -110,7 +116,13 @@ class MosesCommand extends ContainerAwareCommand
                 "Type the correct file path below"
             );
 
-            if (file_exists($outputFile)) {
+            $outputDir = dirname($outputFile);
+            if (!$filesystem->exists($outputDir)) {
+                $this->output->writeln("Creating directory " . $outputDir);
+                $filesystem->mkdir($outputDir);
+            }
+
+            if ($filesystem->exists($outputFile)) {
                 $answer = $this->askAndRead(
                     "Saving file to: ",
                     $outputFile,
@@ -124,7 +136,8 @@ class MosesCommand extends ContainerAwareCommand
             }
         }
 
-        file_put_contents($outputFile, $result);
+        $this->output->writeln("Creating file " . $outputFile);
+        $filesystem->dumpFile($outputFile, $prophecies);
     }
 
     /**

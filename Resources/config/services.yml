@@ -1,8 +1,47 @@
 services:
-   artur_ze_alves_moses.moses:
-       class: ArturZeAlves\MosesBundle\Moses
-       arguments: ["@artur_ze_alves_moses.writer.default"]
+    artur_ze_alves_moses.moses:
+        class: ArturZeAlves\MosesBundle\Moses
+        arguments: ["@artur_ze_alves_moses.writer.default"]
 
-   artur_ze_alves_moses.writer.default:
-       class: ArturZeAlves\MosesBundle\Writer\DefaultWriter
-    #    arguments: ["@service_id", "plain_value", "%parameter%"]
+    artur_ze_alves_moses.parser.php_file_parser:
+        class: ArturZeAlves\MosesBundle\Parser\PHPFileParser
+
+    artur_ze_alves_moses.prediction.prediction:
+        class: ArturZeAlves\MosesBundle\Prediction\Prediction
+
+    artur_ze_alves_moses.writer.default:
+        class: ArturZeAlves\MosesBundle\Writer\DefaultWriter
+        arguments:
+            - "@filesystem"
+            - "@artur_ze_alves_moses.syntax.class"
+
+    artur_ze_alves_moses.syntax.class:
+        class: ArturZeAlves\MosesBundle\Syntax\ClassSyntax
+        arguments:
+            - "@artur_ze_alves_moses.syntax.use"
+            - "@artur_ze_alves_moses.syntax.doc_block"
+            - "@artur_ze_alves_moses.syntax.set_up"
+            - "@artur_ze_alves_moses.syntax.public_method"
+            - "@artur_ze_alves_moses.syntax.private_method"
+
+    artur_ze_alves_moses.syntax.use:
+        class: ArturZeAlves\MosesBundle\Syntax\UseSyntax
+
+    artur_ze_alves_moses.syntax.doc_block:
+        class: ArturZeAlves\MosesBundle\Syntax\DocBlockSyntax
+
+    artur_ze_alves_moses.syntax.set_up:
+        class: ArturZeAlves\MosesBundle\Syntax\SetUpSyntax
+        arguments: ["@artur_ze_alves_moses.syntax.use"]
+
+    artur_ze_alves_moses.syntax.method:
+        class: ArturZeAlves\MosesBundle\Syntax\MethodSyntax
+        arguments: ["@artur_ze_alves_moses.syntax.doc_block"]
+
+    artur_ze_alves_moses.syntax.public_method:
+        class: ArturZeAlves\MosesBundle\Syntax\PublicMethodSyntax
+        parent: artur_ze_alves_moses.syntax.method
+
+    artur_ze_alves_moses.syntax.private_method:
+        class: ArturZeAlves\MosesBundle\Syntax\PrivateMethodSyntax
+        parent: artur_ze_alves_moses.syntax.method
