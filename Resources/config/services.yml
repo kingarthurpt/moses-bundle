@@ -22,7 +22,9 @@ services:
             - "@artur_ze_alves_moses.syntax.doc_block"
             - "@artur_ze_alves_moses.syntax.set_up"
             - "@artur_ze_alves_moses.syntax.public_method"
+            - "@artur_ze_alves_moses.syntax.protected_method"
             - "@artur_ze_alves_moses.syntax.private_method"
+            - "@artur_ze_alves_moses.syntax.class_property"
 
     artur_ze_alves_moses.syntax.use:
         class: ArturZeAlves\MosesBundle\Syntax\UseSyntax
@@ -32,7 +34,9 @@ services:
 
     artur_ze_alves_moses.syntax.set_up:
         class: ArturZeAlves\MosesBundle\Syntax\SetUpSyntax
-        arguments: ["@artur_ze_alves_moses.syntax.use"]
+        arguments:
+            - "@artur_ze_alves_moses.syntax.use"
+            - "@artur_ze_alves_moses.syntax.class_property"
 
     artur_ze_alves_moses.syntax.method:
         class: ArturZeAlves\MosesBundle\Syntax\MethodSyntax
@@ -42,6 +46,14 @@ services:
         class: ArturZeAlves\MosesBundle\Syntax\PublicMethodSyntax
         parent: artur_ze_alves_moses.syntax.method
 
+    artur_ze_alves_moses.syntax.protected_method:
+        class: ArturZeAlves\MosesBundle\Syntax\ProtectedMethodSyntax
+        parent: artur_ze_alves_moses.syntax.method
+
     artur_ze_alves_moses.syntax.private_method:
         class: ArturZeAlves\MosesBundle\Syntax\PrivateMethodSyntax
         parent: artur_ze_alves_moses.syntax.method
+
+    artur_ze_alves_moses.syntax.class_property:
+        class: ArturZeAlves\MosesBundle\Syntax\ClassPropertySyntax
+        arguments: ["@artur_ze_alves_moses.syntax.doc_block"]

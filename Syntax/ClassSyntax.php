@@ -38,31 +38,47 @@ class ClassSyntax implements SyntaxInterface
     protected $publicMethodSyntax;
 
     /**
+     * @var ProtectedMethodSyntax
+     */
+    protected $protectedMethodSyntax;
+
+    /**
      * @var PrivateMethodSyntax
      */
     protected $privateMethodSyntax;
 
     /**
+     * @var ClassPropertySyntax
+     */
+    protected $classPropertySyntax;
+
+    /**
      * Constructor
      *
-     * @param UseSyntax           $useSyntax
-     * @param DocBlockSyntax      $docBlockSyntax
-     * @param SetUpSyntax         $setUpSyntax
-     * @param PublicMethodSyntax  $publicMethodSyntax
-     * @param PrivateMethodSyntax $privateMethodSyntax
+     * @param UseSyntax             $useSyntax
+     * @param DocBlockSyntax        $docBlockSyntax
+     * @param SetUpSyntax           $setUpSyntax
+     * @param PublicMethodSyntax    $publicMethodSyntax
+     * @param ProtectedMethodSyntax $protectedMethodSyntax
+     * @param PrivateMethodSyntax   $privateMethodSyntax
+     * @param ClassPropertySyntax   $classPropertySyntax
      */
     public function __construct(
         UseSyntax $useSyntax,
         DocBlockSyntax $docBlockSyntax,
         SetUpSyntax $setUpSyntax,
         PublicMethodSyntax $publicMethodSyntax,
-        PrivateMethodSyntax $privateMethodSyntax
+        ProtectedMethodSyntax $protectedMethodSyntax,
+        PrivateMethodSyntax $privateMethodSyntax,
+        ClassPropertySyntax $classPropertySyntax
     ) {
         $this->useSyntax = $useSyntax;
         $this->docBlockSyntax = $docBlockSyntax;
         $this->setUpSyntax = $setUpSyntax;
         $this->publicMethodSyntax = $publicMethodSyntax;
+        $this->protectedMethodSyntax = $protectedMethodSyntax;
         $this->privateMethodSyntax = $privateMethodSyntax;
+        $this->classPropertySyntax = $classPropertySyntax;
     }
 
     /**
@@ -73,7 +89,10 @@ class ClassSyntax implements SyntaxInterface
         $setUp = $this->setUpSyntax
             ->setReflection($this->reflection)
             ->getText();
-        $publicFunction = $this->publicMethodSyntax
+        $publicFunctions = $this->publicMethodSyntax
+            ->setReflection($this->reflection)
+            ->getText();
+        $protectedFunctions = $this->protectedMethodSyntax
             ->setReflection($this->reflection)
             ->getText();
         $privateFunctions = $this->privateMethodSyntax
@@ -88,8 +107,10 @@ namespace {$this->namespace};
 {$this->useSyntax->getText()}
 class {$this->reflection->getShortName()}Test extends \PHPUnit_Framework_TestCase
 {
+{$this->classPropertySyntax->getText()}
 {$setUp}
-{$publicFunction}
+{$publicFunctions}
+{$protectedFunctions}
 {$privateFunctions}
 }
 EOF;

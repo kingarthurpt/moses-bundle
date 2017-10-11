@@ -18,7 +18,7 @@ abstract class MethodSyntax
     protected $docBlockSyntax;
 
     /**
-     * [Constructor
+     * Constructor
      *
      * @param DocBlockSyntax $docBlockSyntax
      */

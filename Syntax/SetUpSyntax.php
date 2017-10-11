@@ -13,13 +13,22 @@ class SetUpSyntax extends MethodSyntax implements SyntaxInterface
     protected $useSyntax;
 
     /**
-     * [Constructor
-     *
-     * @param UseSyntax $useSyntax
+     * @var ClassPropertySyntax
      */
-    public function __construct(UseSyntax $useSyntax)
-    {
+    protected $classPropertySyntax;
+
+    /**
+     * Constructor
+     *
+     * @param UseSyntax           $useSyntax
+     * @param ClassPropertySyntax $classPropertySyntax
+     */
+    public function __construct(
+        UseSyntax $useSyntax,
+        ClassPropertySyntax $classPropertySyntax
+    ) {
         $this->useSyntax = $useSyntax;
+        $this->classPropertySyntax = $classPropertySyntax;
     }
 
     /**
@@ -28,6 +37,7 @@ class SetUpSyntax extends MethodSyntax implements SyntaxInterface
     public function getText()
     {
         $classShortName = $this->reflection->getShortName();
+        $this->classPropertySyntax->addProperty(lcfirst($classShortName), ClassPropertySyntax::VISIBILITY_PRIVATE);
         $className = $this->reflection->getName();
 
         $this->useSyntax->addUseStatement($className);
@@ -40,6 +50,7 @@ class SetUpSyntax extends MethodSyntax implements SyntaxInterface
             $class = $this->getClassName($parameter);
             $this->useSyntax->addUseStatement($class);
             $name = $parameter->getName();
+            $this->classPropertySyntax->addProperty($name, ClassPropertySyntax::VISIBILITY_PRIVATE);
 
             $shortClassName = $this->getShortClassName($class);
             $arguments[] = sprintf('$this->%s->reveal()', $name);
