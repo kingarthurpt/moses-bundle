@@ -68,7 +68,7 @@ class MosesCommand extends ContainerAwareCommand
         $filesystem = $moses->getWriter()->getFilesystem();
 
         $filename = $input->getArgument('class');
-        if (!$filesystem->exists($filename)) {
+        if (!file_exists($filename)) {
             throw new FileNotFoundException();
         }
 
@@ -115,14 +115,16 @@ class MosesCommand extends ContainerAwareCommand
                 "Is this file path correct?",
                 "Type the correct file path below"
             );
+        }
 
-            $outputDir = dirname($outputFile);
-            if (!$filesystem->exists($outputDir)) {
-                $this->output->writeln("Creating directory " . $outputDir);
-                $filesystem->mkdir($outputDir);
-            }
+        $outputDir = dirname($outputFile);
+        if (!file_exists($outputDir)) {
+            $this->output->writeln("Creating directory " . $outputDir);
+            $filesystem->mkdir($outputDir);
+        }
 
-            if ($filesystem->exists($outputFile)) {
+        if (!$this->input->getOption('no-confirmation')) {
+            if (file_exists($outputFile)) {
                 $answer = $this->askAndRead(
                     "Saving file to: ",
                     $outputFile,
@@ -137,7 +139,7 @@ class MosesCommand extends ContainerAwareCommand
         }
 
         $this->output->writeln("Creating file " . $outputFile);
-        $filesystem->dumpFile($outputFile, $prophecies);
+        file_put_contents($outputFile, $prophecies);
     }
 
     /**
