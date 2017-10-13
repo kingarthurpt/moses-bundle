@@ -48,6 +48,11 @@ class ClassSyntax implements SyntaxInterface
     protected $privateMethodSyntax;
 
     /**
+     * @var ClassPropertySyntax
+     */
+    protected $classPropertySyntax;
+
+    /**
      * Constructor
      *
      * @param UseSyntax             $useSyntax
@@ -56,6 +61,7 @@ class ClassSyntax implements SyntaxInterface
      * @param PublicMethodSyntax    $publicMethodSyntax
      * @param ProtectedMethodSyntax $protectedMethodSyntax
      * @param PrivateMethodSyntax   $privateMethodSyntax
+     * @param ClassPropertySyntax   $classPropertySyntax
      */
     public function __construct(
         UseSyntax $useSyntax,
@@ -63,7 +69,8 @@ class ClassSyntax implements SyntaxInterface
         SetUpSyntax $setUpSyntax,
         PublicMethodSyntax $publicMethodSyntax,
         ProtectedMethodSyntax $protectedMethodSyntax,
-        PrivateMethodSyntax $privateMethodSyntax
+        PrivateMethodSyntax $privateMethodSyntax,
+        ClassPropertySyntax $classPropertySyntax
     ) {
         $this->useSyntax = $useSyntax;
         $this->docBlockSyntax = $docBlockSyntax;
@@ -71,6 +78,7 @@ class ClassSyntax implements SyntaxInterface
         $this->publicMethodSyntax = $publicMethodSyntax;
         $this->protectedMethodSyntax = $protectedMethodSyntax;
         $this->privateMethodSyntax = $privateMethodSyntax;
+        $this->classPropertySyntax = $classPropertySyntax;
     }
 
     /**
@@ -99,6 +107,7 @@ namespace {$this->namespace};
 {$this->useSyntax->getText()}
 class {$this->reflection->getShortName()}Test extends \PHPUnit_Framework_TestCase
 {
+{$this->classPropertySyntax->getText()}
 {$setUp}
 {$publicFunctions}
 {$protectedFunctions}

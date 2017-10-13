@@ -120,6 +120,27 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class FilterControllerEventTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     *
+     */
+    private filterControllerEvent;
+    /**
+     *
+     */
+    private kernel;
+    /**
+     *
+     */
+    private controller;
+    /**
+     *
+     */
+    private request;
+    /**
+     *
+     */
+    private requestType;
+
     public function setUp()
     {
         $this->kernel = $this->prophesize(HttpKernelInterface::class);
@@ -146,6 +167,7 @@ class FilterControllerEventTest extends \PHPUnit_Framework_TestCase
     {
 
     }
+
 
 
     /**
