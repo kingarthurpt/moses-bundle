@@ -124,22 +124,27 @@ class FilterControllerEventTest extends \PHPUnit_Framework_TestCase
      *
      */
     private filterControllerEvent;
+
     /**
      *
      */
     private kernel;
+
     /**
      *
      */
     private controller;
+
     /**
      *
      */
     private request;
+
     /**
      *
      */
     private requestType;
+
 
     public function setUp()
     {

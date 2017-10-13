@@ -39,7 +39,7 @@ class ClassPropertySyntax implements SyntaxInterface
         $str = "";
         foreach ($this->properties as $property) {
             $str .= $this->docBlockSyntax->getText();
-            $str .= "    ". $property . "\n";
+            $str .= "    ". $property . "\n\n";
         }
 
         return $str;
