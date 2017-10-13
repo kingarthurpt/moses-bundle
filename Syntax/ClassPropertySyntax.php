@@ -58,7 +58,7 @@ class ClassPropertySyntax implements SyntaxInterface
         }
 
         $this->properties[] = <<<EOF
-{$visibility} {$property};
+{$visibility} $${property};
 EOF;
     }
 
