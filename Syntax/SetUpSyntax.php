@@ -37,11 +37,12 @@ class SetUpSyntax extends MethodSyntax implements SyntaxInterface
     public function getText()
     {
         $classShortName = $this->reflection->getShortName();
-        $this->classPropertySyntax->addProperty(lcfirst($classShortName), ClassPropertySyntax::VISIBILITY_PRIVATE);
-        $className = $this->reflection->getName();
+        $propertyName = $this->getPropertyName($classShortName);
+        $this->classPropertySyntax->addProperty($propertyName, ClassPropertySyntax::VISIBILITY_PRIVATE);
 
+        $className = $this->reflection->getName();
         $this->useSyntax->addUseStatement($className);
-        $property = '$this->' . lcfirst($classShortName);
+        $property = '$this->' . $propertyName;
 
         $arguments = [];
         $argumentProphecies = [];
@@ -95,5 +96,20 @@ EOF;
         $str = explode("\\", $class);
 
         return $str[count($str) - 1];
+    }
+
+    /**
+     * Gets a shorter property name for a given short class name in camel case.
+     * This shorter name is the last word in uppercase of the given name.
+     *
+     * @param string $classShortName
+     *
+     * @return string
+     */
+    protected function getPropertyName($classShortName)
+    {
+        $parts = preg_split("/(?=[A-Z])/", lcfirst($classShortName));
+
+        return strtolower(end($parts));
     }
 }
