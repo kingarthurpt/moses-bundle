@@ -116,8 +116,6 @@ class FilterControllerEvent extends KernelEvent
 
 namespace Symfony\Component\HttpKernel\Tests\Event;
 
-use $controller;
-use $requestType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;

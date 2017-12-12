@@ -34,6 +34,11 @@ class UseSyntax implements SyntaxInterface
      */
     public function addUseStatement($class)
     {
+        // Ignores non type hinted arguments
+        if ($class[0] === "$") {
+            return;
+        }
+
         $this->uses[] = <<<EOF
 use ${class};
 EOF;
