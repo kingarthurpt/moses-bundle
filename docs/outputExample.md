@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Allows filtering of a controller callable.
+ * Allows filtering of a controller callable
  *
  * You can call getController() to retrieve the current controller. With
  * setController() you can set a new controller that is used in the processing
@@ -26,12 +26,15 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * Controllers should be callables.
  *
- * @author Bernhard Schussek <bschussek@gmail.com>
+ * @author Bernhard Schussek <bernhard.schussek@symfony.com>
+ *
+ * @api
  */
 class FilterControllerEvent extends KernelEvent
 {
     /**
-     * The current controller.
+     * The current controller
+     * @var callable
      */
     private $controller;
 
@@ -43,9 +46,11 @@ class FilterControllerEvent extends KernelEvent
     }
 
     /**
-     * Returns the current controller.
+     * Returns the current controller
      *
      * @return callable
+     *
+     * @api
      */
     public function getController()
     {
@@ -53,11 +58,11 @@ class FilterControllerEvent extends KernelEvent
     }
 
     /**
-     * Sets a new controller.
+     * Sets a new controller
      *
      * @param callable $controller
      *
-     * @throws \LogicException
+     * @api
      */
     public function setController($controller)
     {
@@ -81,7 +86,7 @@ class FilterControllerEvent extends KernelEvent
                 $a[] = sprintf('%s => %s', $k, $this->varToString($v));
             }
 
-            return sprintf('Array(%s)', implode(', ', $a));
+            return sprintf("Array(%s)", implode(', ', $a));
         }
 
         if (is_resource($var)) {
@@ -103,7 +108,6 @@ class FilterControllerEvent extends KernelEvent
         return (string) $var;
     }
 }
-
 ```
 ## Generated test class
 #### vendor/symfony/symfony/src/Symfony/Component/HttpKernel/Tests/Event/FilterControllerEventTest.php
@@ -123,7 +127,7 @@ class FilterControllerEventTest extends \PHPUnit_Framework_TestCase
     /**
      *
      */
-    private $filterControllerEvent;
+    private $event;
 
     /**
      *
@@ -153,7 +157,7 @@ class FilterControllerEventTest extends \PHPUnit_Framework_TestCase
         $this->request = $this->prophesize(Request::class);
         $this->requestType = $this->prophesize($requestType::class);
 
-        $this->filterControllerEvent = new FilterControllerEvent($this->kernel->reveal(), $this->controller->reveal(), $this->request->reveal(), $this->requestType->reveal());
+        $this->event = new FilterControllerEvent($this->kernel->reveal(), $this->controller->reveal(), $this->request->reveal(), $this->requestType->reveal());
     }
 
 
