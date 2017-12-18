@@ -36,6 +36,11 @@ class SetUpSyntax extends MethodSyntax implements SyntaxInterface
      */
     public function getText()
     {
+        if (null === $this->reflection->getConstructor()) {
+            return "";
+        }
+        $parameters = $this->reflection->getConstructor()->getParameters();
+
         $classShortName = $this->reflection->getShortName();
         $propertyName = $this->getPropertyName($classShortName);
         $this->classPropertySyntax->addProperty($propertyName, ClassPropertySyntax::VISIBILITY_PRIVATE);
@@ -46,7 +51,6 @@ class SetUpSyntax extends MethodSyntax implements SyntaxInterface
 
         $arguments = [];
         $argumentProphecies = [];
-        $parameters = $this->reflection->getConstructor()->getParameters();
         foreach ($parameters as $parameter) {
             $class = $this->getClassName($parameter);
             $this->useSyntax->addUseStatement($class);
