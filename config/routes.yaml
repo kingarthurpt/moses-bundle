@@ -1,0 +1,3 @@
+#index:
+#    path: /
+#    controller: ArturZeAlves\Controller\DefaultController::index
